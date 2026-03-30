@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid landing">
+    <div class="row">
+        {% for source, title, desc, author, img, p_date, url in sources %}
+        <div class="col-md-4 d-flex justify-content-center">
+            <div class="card mb-4 bg-dark text-white shadow-sm h-100">
+                <form action="{{ url_for('add_to_bookmarks') }}" method="POST">
+                    <input type="hidden" name="title" value="{{ title }}">
+                    <input type="hidden" name="url" value="{{ url }}">
+                    <input type="hidden" name="source" value="{{ source.name if source is mapping else source }}">
+                    <input type="hidden" name="desc" value="{{ desc }}">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <input type="hidden" name="date" value="{{ p_date }}">
+                    <button type="submit" class="bookmark-btn" title="Add to Bookmarks">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                </form>
+
+                <img src="{{ img if img else 'https://via.placeholder.com/400x200?text=No+Image' }}"
+                    class="card-img-top image-fluid" alt="{{ title }}">
+
+                <div class="card-body">
+                    <p class="card-text source mb-2">{{ source.name if source is mapping else source }}</p>
+                    <a href="{{ url }}" target="_blank">
+                        <h5 class="card-title"><b>{{ title }}</b></h5>
+                    </a>
+                    <p class="card-text text-muted small">{{ desc[:150] }}{% if desc|length > 150 %}...{% endif %}</p>
+                </div>
+
+                <div class="card-footer border-top-0 bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center small text-muted">
+                        <span><i class="far fa-user mr-1"></i> {{ author[:15] }}{% if author|length > 15 %}..{% endif
+                            %}</span>
+                        <span><i class="far fa-calendar-alt mr-1"></i> {{ p_date[:10] }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

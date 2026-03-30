@@ -1,0 +1,17 @@
+certifi>=2024.0.0
+charset-normalizer>=3.0.0
+click>=8.1.0
+colorama>=0.4.6
+Flask>=3.0.0
+gunicorn>=21.2.0
+idna>=3.7
+itsdangerous>=2.2.0
+Jinja2>=3.1.0
+MarkupSafe>=2.1.0
+newsapi-python>=0.2.7
+requests>=2.32.0
+urllib3>=2.2.0
+Werkzeug>=3.0.0
+python-dotenv>=1.0.0
+textblob>=0.18.0
+libsql-client>=0.0.35

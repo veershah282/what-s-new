@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container landing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4"><span class="logo">News</span> Analysis</h1>
+            <p class="lead text-muted">A statistical deep-dive into the current news landscape.</p>
+        </div>
+    </div>
+
+    <!-- Overall Mood Section -->
+    <div class="row mb-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="card bg-dark text-white shadow-sm text-center p-4 analysis-mood-card">
+                <h3>Global News Mood</h3>
+                <div class="display-1 mt-3 mb-3" style="color: {{ mood_color }};">
+                    {% if mood == 'Positive' %}
+                    <i class="far fa-smile-beam"></i>
+                    {% elif mood == 'Negative' %}
+                    <i class="far fa-frown-open"></i>
+                    {% else %}
+                    <i class="far fa-meh"></i>
+                    {% endif %}
+                </div>
+                <h2 style="color: {{ mood_color }}; font-weight: bold;">{{ mood }}</h2>
+                <p class="text-muted">Average Sentiment Score: <strong>{{ avg_sentiment }}</strong></p>
+                <small class="text-muted">(-1.0 = Very Negative, +1.0 = Very Positive)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card bg-dark text-white shadow-sm p-4 analysis-chart-card">
+                <h4 class="mb-4">Sentiment by Category</h4>
+                <div style="height: 400px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const categoryData = {{ category_sentiment | tojson }};
+
+    const labels = Object.keys(categoryData);
+    const scores = Object.values(categoryData);
+
+    // Background colors based on sentiment
+    const bgColors = scores.map(score => {
+        if (score > 0.1) return 'rgba(40, 167, 69, 0.7)';
+        if (score < -0.1) return 'rgba(220, 53, 69, 0.7)';
+        return 'rgba(255, 193, 7, 0.7)';
+    });
+
+    const borderColors = scores.map(score => {
+        if (score > 0.1) return 'rgba(40, 167, 69, 1)';
+        if (score < -0.1) return 'rgba(220, 53, 69, 1)';
+        return 'rgba(255, 193, 7, 1)';
+    });
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sentiment Polarity',
+                data: scores,
+                backgroundColor: bgColors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMin: -1,
+                    suggestedMax: 1,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#fff'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#fff'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

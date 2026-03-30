@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid landing">
+    <h1 class="mb-4">My Bookmarks</h1>
+
+    {% if not bookmarks %}
+    <div class="alert alert-info">You haven't bookmarked any articles yet.</div>
+    {% else %}
+    <div class="row">
+        {% for bookmark in bookmarks %}
+        <div class="col-md-4 d-flex justify-content-center">
+            <div class="card mb-3 bg-dark text-white">
+                <img src="{{ bookmark.image_url }}" class="card-img image-fluid" alt="...">
+                <div class="card-body">
+                    <p class="card-text source">{{ bookmark.source }}</p>
+                    <a href="{{ bookmark.url }}">
+                        <h2 class="card-title"><b> {{ bookmark.title }} </b></h2>
+                    </a>
+                    <p class="card-text">{{ bookmark.description }}</p>
+
+                    <form action="{{ url_for('remove_from_bookmarks') }}" method="POST" class="mt-2">
+                        <input type="hidden" name="url" value="{{ bookmark.url }}">
+                        <button type="submit" class="btn btn-outline-secondary btn-block">Remove Bookmark</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <p class="card-text published">Date Published: {{ bookmark.published_at }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
