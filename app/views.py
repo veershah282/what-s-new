@@ -3,11 +3,11 @@ from flask import render_template
 from .request import businessArticles, entArticles, get_news_source, healthArticles, publishedArticles, randomArticles, scienceArticles, sportArticles, techArticles, topHeadlines, searchArticles
 from datetime import datetime
 from flask import request, redirect, url_for, flash
-from .database import init_db, add_bookmark, get_bookmarks, remove_bookmark
+from .database import add_bookmark, get_bookmarks, remove_bookmark
 from textblob import TextBlob
 import math
 
-init_db(app)
+# init_db(app) is now called in app/__init__.py
 
 def format_articles_for_strip(articles_list):
     strip_items = []

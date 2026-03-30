@@ -2,7 +2,7 @@ import os
 import sqlite3
 from flask import g
 
-DATABASE = 'news_hub.db'
+DATABASE = os.path.join('/tmp', 'news_hub.db') if os.environ.get('VERCEL') else 'news_hub.db'
 DB_URL = os.environ.get("TURSO_DATABASE_URL")
 DB_TOKEN = os.environ.get("TURSO_AUTH_TOKEN")
 
@@ -11,8 +11,13 @@ def get_db():
     if db is None:
         if DB_URL:
             # Use Turso (libsql-client)
-            import libsql_client
-            db = g._database = libsql_client.create_client_sync(DB_URL, auth_token=DB_TOKEN)
+            try:
+                import libsql_client
+                db = g._database = libsql_client.create_client_sync(DB_URL, auth_token=DB_TOKEN)
+            except ImportError:
+                # Fallback to local if client not installed or failing
+                db = g._database = sqlite3.connect(DATABASE)
+                db.row_factory = sqlite3.Row
         else:
             # Use local SQLite
             db = g._database = sqlite3.connect(DATABASE)
